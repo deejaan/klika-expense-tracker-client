@@ -3,11 +3,11 @@ const getEnvVars = origin => {
   switch (part) {
     case 'app':
       return {
-        API_URL: 'https://app.com',
+        API_URL: 'http://app.com',
       };
     default:
       return {
-        API_URL: 'https://localhost:3000',
+        API_URL: 'http://localhost:4000/api/v1',
       };
   }
 };
