@@ -16,6 +16,9 @@ export const publicRoutes = [
     name: 'Register',
     component: Register,
   },
+  {
+    path: '/',
+  },
 ];
 
 export const privateRoutes = [

@@ -17,7 +17,7 @@ const Login = () => {
 
   const renderRedirect = () => {
     if (redirect) {
-      return <Redirect to='/' />;
+      return <Redirect to='/home' />;
     }
     if (redirectToRegister) {
       return <Redirect to='/register' />;
