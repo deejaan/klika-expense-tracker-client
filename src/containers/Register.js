@@ -2,11 +2,8 @@ import RegisterForm from '../components/RegisterForm.js';
 import React, { useState, useRef } from 'react';
 import { register } from '../services/auth.service';
 import { Redirect } from 'react-router-dom';
-import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import { toastId } from '../constants';
 import { validateOk } from '../validations/registerValidation';
-
+import { notify } from '../util/helper';
 const Register = () => {
   const form = useRef();
   const [email, setEmail] = useState('');
@@ -20,16 +17,6 @@ const Register = () => {
   const onChangePassword = e => {
     const password = e.target.value;
     setPassword(password);
-  };
-
-  const notify = (message, type) => {
-    if (!toast.isActive(toastId)) {
-      if (type === 'success') {
-        toast.success(message, { toastId: toastId });
-      } else {
-        toast.error(message, { toastId: toastId });
-      }
-    }
   };
 
   const renderRedirect = () => {

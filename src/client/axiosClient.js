@@ -8,7 +8,7 @@ const axios = () => {
     baseURL: API,
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${localStorage.getItem('token')}`,
+      Authorization: `${JSON.parse(localStorage.getItem('token'))}`,
     },
     paramsSerializer: params => {
       return qs.stringify(params);
@@ -16,7 +16,9 @@ const axios = () => {
   });
 
   client.interceptors.request.use(request => {
-    request.headers.Authorization = `Bearer ${localStorage.getItem('token')}`;
+    request.headers.Authorization = `${JSON.parse(
+      localStorage.getItem('token')
+    )}`;
     return request;
   });
 
