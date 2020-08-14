@@ -10,15 +10,19 @@ const Home = () => {
   const [showDeletePopup, setShowDeletePopup] = useState(false);
   const [expenseId, setExpenseId] = useState();
   const [deleteLoading, setDeleteLoading] = useState(false);
+  const [errorLoading, setErrorLoading] = useState(false);
 
-  const getProducts = () => {
-    const fetchData = async () => {
-      setLoading(true);
+  const getExpenses = async () => {
+    setLoading(true);
+    try {
       const data = await expenses();
       setExpensesArray(data);
       setLoading(false);
-    };
-    fetchData();
+      setErrorLoading(false);
+    } catch (error) {
+      setErrorLoading(true);
+      setLoading(false);
+    }
   };
 
   const triggerExpenseDelete = id => {
@@ -42,10 +46,10 @@ const Home = () => {
         setShowDeletePopup(false);
       });
   }
-  const toggle = () => setDropdownOpen(prevState => !prevState);
+  const toggleDropDown = () => setDropdownOpen(prevState => !prevState);
 
   useEffect(() => {
-    getProducts();
+    getExpenses();
   }, []);
 
   return (
@@ -58,8 +62,10 @@ const Home = () => {
       deleteLoading={deleteLoading}
       triggerExpenseDelete={triggerExpenseDelete}
       deleteExpenseById={deleteExpenseById}
-      toggle={toggle}
+      toggleDropDown={toggleDropDown}
       expensesArray={expensesArray}
+      errorLoading={errorLoading}
+      getExpenses={getExpenses}
     ></ExpenseList>
   );
 };

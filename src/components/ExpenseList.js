@@ -22,11 +22,37 @@ const ExpenseList = ({
   deleteLoading,
   triggerExpenseDelete,
   deleteExpenseById,
-  toggle,
+  toggleDropDown,
   expensesArray,
+  errorLoading,
+  getExpenses,
 }) => {
   if (loading) {
     return <Loader className='loader'></Loader>;
+  }
+  if (errorLoading) {
+    return (
+      <Modal.Dialog>
+        <Modal.Header>
+          <Modal.Title>Error</Modal.Title>
+        </Modal.Header>
+
+        <Modal.Body>
+          <p>Error loading expenses. Please try again.</p>
+        </Modal.Body>
+
+        <Modal.Footer>
+          <button
+            className='btn-primary'
+            onClick={() => {
+              getExpenses();
+            }}
+          >
+            Try again
+          </button>
+        </Modal.Footer>
+      </Modal.Dialog>
+    );
   }
   return (
     <div>
@@ -78,7 +104,7 @@ const ExpenseList = ({
           <tr>
             <th colSpan='1'>Expenses</th>
             <th colSpan='1'>
-              <Dropdown isOpen={dropdownOpen} toggle={toggle} size='sm'>
+              <Dropdown isOpen={dropdownOpen} toggle={toggleDropDown} size='sm'>
                 <DropdownToggle caret className='btn-block'>
                   Filter by
                 </DropdownToggle>
@@ -109,7 +135,7 @@ const ExpenseList = ({
               id={item.id}
               date={item.createdAt.slice(0, 10)}
               name={item.name}
-              categoryName={item.categoryName}
+              categoryName={item.category.name}
               description={item.description}
               amount={item.amount}
               triggerExpenseDelete={triggerExpenseDelete}
@@ -117,6 +143,17 @@ const ExpenseList = ({
           ))}
         </tbody>
       </table>
+      {expensesArray.length === 0 && (
+        <Modal.Dialog>
+          <Modal.Header>
+            <Modal.Title>List empty</Modal.Title>
+          </Modal.Header>
+
+          <Modal.Body>
+            <p>You have no expenses.</p>
+          </Modal.Body>
+        </Modal.Dialog>
+      )}
     </div>
   );
 };
@@ -130,8 +167,9 @@ ExpenseList.propTypes = {
   deleteLoading: PropTypes.bool,
   triggerExpenseDelete: PropTypes.func,
   deleteExpenseById: PropTypes.func,
-  toggle: PropTypes.func,
+  toggleDropDown: PropTypes.func,
   expensesArray: PropTypes.array,
+  getExpenses: PropTypes.func,
+  errorLoading: PropTypes.bool,
 };
-
 export default ExpenseList;
