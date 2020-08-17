@@ -11,6 +11,21 @@ const Home = () => {
   const [expenseId, setExpenseId] = useState();
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [errorLoading, setErrorLoading] = useState(false);
+  const [expensesArrayCopy, setExpensesArrayCopy] = useState([]);
+
+  const handleSearchChange = e => {
+    let newExpensesList = [];
+    if (e.target.value !== '') {
+      newExpensesList = expensesArrayCopy.filter(item => {
+        const lc = item.name.toLowerCase();
+        const filter = e.target.value.toLowerCase();
+        return lc.includes(filter);
+      });
+    } else {
+      newExpensesList = expensesArrayCopy;
+    }
+    setExpensesArray(newExpensesList);
+  };
 
   const getExpenses = async () => {
     setLoading(true);
@@ -19,6 +34,7 @@ const Home = () => {
       setExpensesArray(data);
       setLoading(false);
       setErrorLoading(false);
+      setExpensesArrayCopy(data);
     } catch (error) {
       setErrorLoading(true);
       setLoading(false);
@@ -66,6 +82,7 @@ const Home = () => {
       expensesArray={expensesArray}
       errorLoading={errorLoading}
       getExpenses={getExpenses}
+      handleSearchChange={handleSearchChange}
     ></ExpenseList>
   );
 };

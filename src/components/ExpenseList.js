@@ -26,6 +26,7 @@ const ExpenseList = ({
   expensesArray,
   errorLoading,
   getExpenses,
+  handleSearchChange,
 }) => {
   if (loading) {
     return <Loader className='loader'></Loader>;
@@ -116,7 +117,11 @@ const ExpenseList = ({
               </Dropdown>
             </th>
             <th colSpan='4'>
-              <input placeholder='Search..' className='pl-1'></input>
+              <input
+                placeholder='Search..'
+                className='pl-1'
+                onChange={handleSearchChange}
+              ></input>
             </th>
           </tr>
           <tr>
@@ -171,5 +176,6 @@ ExpenseList.propTypes = {
   expensesArray: PropTypes.array,
   getExpenses: PropTypes.func,
   errorLoading: PropTypes.bool,
+  handleSearchChange: PropTypes.func,
 };
 export default ExpenseList;
