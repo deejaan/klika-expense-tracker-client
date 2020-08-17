@@ -1,20 +1,15 @@
 import React from 'react';
-import {
-  Dropdown,
-  DropdownToggle,
-  DropdownMenu,
-  DropdownItem,
-} from 'reactstrap';
 import '../assets/scss/ExpenseList.scss';
 import Expense from '../components/Expense';
 import Loader from './Loader';
+import Select from 'react-select';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Modal from 'react-bootstrap/Modal';
 import PropTypes from 'prop-types';
+import { filterOptions } from '../constants';
 
 const ExpenseList = ({
-  dropdownOpen,
   loading,
   showDeletePopup,
   setShowDeletePopup,
@@ -22,10 +17,10 @@ const ExpenseList = ({
   deleteLoading,
   triggerExpenseDelete,
   deleteExpenseById,
-  toggleDropDown,
   expensesArray,
   errorLoading,
   getExpenses,
+  triggerFilterExpenses,
   handleSearchChange,
 }) => {
   if (loading) {
@@ -105,16 +100,11 @@ const ExpenseList = ({
           <tr>
             <th colSpan='1'>Expenses</th>
             <th colSpan='1'>
-              <Dropdown isOpen={dropdownOpen} toggle={toggleDropDown} size='sm'>
-                <DropdownToggle caret className='btn-block'>
-                  Filter by
-                </DropdownToggle>
-                <DropdownMenu>
-                  <DropdownItem>Cat1</DropdownItem>
-                  <DropdownItem>Cat2</DropdownItem>
-                  <DropdownItem>Cat3</DropdownItem>
-                </DropdownMenu>
-              </Dropdown>
+              <Select
+                placeholder='Filter by'
+                options={filterOptions} // set list of the data
+                onChange={triggerFilterExpenses} // assign onChange function
+              />
             </th>
             <th colSpan='4'>
               <input
@@ -176,6 +166,7 @@ ExpenseList.propTypes = {
   expensesArray: PropTypes.array,
   getExpenses: PropTypes.func,
   errorLoading: PropTypes.bool,
+  triggerFilterExpenses: PropTypes.func,
   handleSearchChange: PropTypes.func,
 };
 export default ExpenseList;

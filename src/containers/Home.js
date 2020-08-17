@@ -41,6 +41,18 @@ const Home = () => {
     }
   };
 
+  const triggerFilterExpenses = e => {
+    let newExpensesList = [];
+    if (e.value !== 0) {
+      newExpensesList = expensesArrayCopy.filter(item => {
+        return item.category.id === e.value;
+      });
+    } else {
+      newExpensesList = expensesArrayCopy;
+    }
+    setExpensesArray(newExpensesList);
+  };
+
   const triggerExpenseDelete = id => {
     setExpenseId(id);
     setShowDeletePopup(true);
@@ -62,6 +74,7 @@ const Home = () => {
         setShowDeletePopup(false);
       });
   }
+
   const toggleDropDown = () => setDropdownOpen(prevState => !prevState);
 
   useEffect(() => {
@@ -83,10 +96,10 @@ const Home = () => {
       errorLoading={errorLoading}
       getExpenses={getExpenses}
       handleSearchChange={handleSearchChange}
+      triggerFilterExpenses={triggerFilterExpenses}
     ></ExpenseList>
   );
 };
-
 Home.propTypes = {};
 
 export default Home;
