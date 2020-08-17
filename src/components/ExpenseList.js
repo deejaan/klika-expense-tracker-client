@@ -7,6 +7,9 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Modal from 'react-bootstrap/Modal';
 import PropTypes from 'prop-types';
+import Tooltip from '@material-ui/core/Tooltip';
+import { faCaretDown, faCaretUp } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { filterOptions } from '../constants';
 
 const ExpenseList = ({
@@ -20,6 +23,8 @@ const ExpenseList = ({
   expensesArray,
   errorLoading,
   getExpenses,
+  sortExpenses,
+  sortVariations,
   triggerFilterExpenses,
   handleSearchChange,
 }) => {
@@ -114,12 +119,104 @@ const ExpenseList = ({
               ></input>
             </th>
           </tr>
-          <tr>
-            <th scope='col'>Date</th>
-            <th scope='col'>Name</th>
-            <th scope='col'>Category</th>
-            <th scope='col'>Description</th>
-            <th scope='col'>Amount</th>
+          <tr className='hover'>
+            <th
+              scope='col'
+              onClick={() => {
+                sortExpenses('createdAt');
+              }}
+              style={{ cursor: 'pointer' }}
+            >
+              <Tooltip title='Click to sort' placement='bot'>
+                <div>
+                  Date{' '}
+                  {sortVariations[0].sortType === 'ascending' && (
+                    <FontAwesomeIcon icon={faCaretUp} />
+                  )}
+                  {sortVariations[0].sortType === 'descending' && (
+                    <FontAwesomeIcon icon={faCaretDown} />
+                  )}
+                </div>
+              </Tooltip>
+            </th>
+
+            <th
+              scope='col'
+              onClick={() => {
+                sortExpenses('name');
+              }}
+              style={{ cursor: 'pointer' }}
+            >
+              <Tooltip title='Click to sort' placement='bot'>
+                <div>
+                  Name{' '}
+                  {sortVariations[1].sortType === 'ascending' && (
+                    <FontAwesomeIcon icon={faCaretUp} />
+                  )}
+                  {sortVariations[1].sortType === 'descending' && (
+                    <FontAwesomeIcon icon={faCaretDown} />
+                  )}
+                </div>
+              </Tooltip>
+            </th>
+
+            <th
+              scope='col'
+              onClick={() => {
+                sortExpenses('category');
+              }}
+              style={{ cursor: 'pointer' }}
+            >
+              <Tooltip title='Click to sort' placement='bot'>
+                <div>
+                  Category{' '}
+                  {sortVariations[2].sortType === 'ascending' && (
+                    <FontAwesomeIcon icon={faCaretUp} />
+                  )}
+                  {sortVariations[2].sortType === 'descending' && (
+                    <FontAwesomeIcon icon={faCaretDown} />
+                  )}
+                </div>
+              </Tooltip>
+            </th>
+            <th
+              scope='col'
+              onClick={() => {
+                sortExpenses('description');
+              }}
+              style={{ cursor: 'pointer' }}
+            >
+              <Tooltip title='Click to sort' placement='bot'>
+                <div>
+                  Description{' '}
+                  {sortVariations[3].sortType === 'ascending' && (
+                    <FontAwesomeIcon icon={faCaretUp} />
+                  )}
+                  {sortVariations[3].sortType === 'descending' && (
+                    <FontAwesomeIcon icon={faCaretDown} />
+                  )}
+                </div>
+              </Tooltip>
+            </th>
+            <th
+              scope='col'
+              onClick={() => {
+                sortExpenses('amount');
+              }}
+              style={{ cursor: 'pointer' }}
+            >
+              <Tooltip title='Click to sort' placement='bot'>
+                <div>
+                  Amount{' '}
+                  {sortVariations[4].sortType === 'ascending' && (
+                    <FontAwesomeIcon icon={faCaretUp} />
+                  )}
+                  {sortVariations[4].sortType === 'descending' && (
+                    <FontAwesomeIcon icon={faCaretDown} />
+                  )}
+                </div>
+              </Tooltip>
+            </th>
             <th></th>
           </tr>
         </thead>
@@ -166,6 +263,8 @@ ExpenseList.propTypes = {
   expensesArray: PropTypes.array,
   getExpenses: PropTypes.func,
   errorLoading: PropTypes.bool,
+  sortExpenses: PropTypes.func,
+  sortVariations: PropTypes.array,
   triggerFilterExpenses: PropTypes.func,
   handleSearchChange: PropTypes.func,
 };

@@ -11,6 +11,13 @@ const Home = () => {
   const [expenseId, setExpenseId] = useState();
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [errorLoading, setErrorLoading] = useState(false);
+  const [sortVariations, setSortVariations] = useState([
+    { sortBy: 'createdAt', sortType: 'none' },
+    { sortBy: 'name', sortType: 'none' },
+    { sortBy: 'category', sortType: 'none' },
+    { sortBy: 'description', sortType: 'none' },
+    { sortBy: 'amount', sortType: 'none' },
+  ]);
   const [expensesArrayCopy, setExpensesArrayCopy] = useState([]);
 
   const handleSearchChange = e => {
@@ -41,6 +48,69 @@ const Home = () => {
     }
   };
 
+  const setSortVariation = sortBy => {
+    let variations = sortVariations;
+    variations.forEach(variation => {
+      if (variation.sortBy === sortBy) {
+        if (variation.sortType === 'none') {
+          variation.sortType = 'ascending';
+        } else if (variation.sortType === 'ascending') {
+          variation.sortType = 'descending';
+        } else if (variation.sortType === 'descending') {
+          variation.sortType = 'ascending';
+        }
+      } else {
+        variation.sortType = 'none';
+      }
+    });
+    setSortVariations(variations);
+  };
+
+  const sortExpenses = sortBy => {
+    setSortVariation(sortBy);
+    let variation = sortVariations.find(item => item.sortBy === sortBy);
+    let sortedExpenses = [...expensesArray];
+
+    sortedExpenses.sort((a, b) => {
+      let itemA, itemB;
+      if (variation.sortBy === 'category') {
+        itemA = a[variation.sortBy].name.toLowerCase();
+        itemB = b[variation.sortBy].name.toLowerCase();
+      } else if (variation.sortBy === 'amount') {
+        itemA = a[variation.sortBy];
+        itemB = b[variation.sortBy];
+      } else {
+        if (a[variation.sortBy] === null) {
+          itemA = '';
+        } else {
+          itemA = a[variation.sortBy].toLowerCase();
+        }
+        if (b[variation.sortBy] === null) {
+          itemB = '';
+        } else {
+          itemB = b[variation.sortBy].toLowerCase();
+        }
+      }
+      if (variation.sortType === 'ascending') {
+        if (itemA < itemB) {
+          return -1;
+        }
+        if (itemA > itemB) {
+          return 1;
+        }
+        return 0;
+      } else {
+        if (itemA < itemB) {
+          return 1;
+        }
+        if (itemA > itemB) {
+          return -1;
+        }
+        return 0;
+      }
+    });
+    setExpensesArray(sortedExpenses);
+  };
   const triggerFilterExpenses = e => {
     let newExpensesList = [];
     if (e.value !== 0) {
@@ -95,6 +165,8 @@ const Home = () => {
       expensesArray={expensesArray}
       errorLoading={errorLoading}
       getExpenses={getExpenses}
+      sortExpenses={sortExpenses}
+      sortVariations={sortVariations}
       handleSearchChange={handleSearchChange}
       triggerFilterExpenses={triggerFilterExpenses}
     ></ExpenseList>
