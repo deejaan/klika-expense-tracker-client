@@ -1,9 +1,9 @@
 const getEnvVars = origin => {
   const part = origin.split('//')[1].split('.')[0];
   switch (part) {
-    case 'app':
+    case 'klika-expense-web':
       return {
-        API_URL: 'http://app.com',
+        API_URL: 'https://klika-expense-api.herokuapp.com/api/v1',
       };
     default:
       return {
