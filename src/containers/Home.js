@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import ExpenseList from '../components/ExpenseList';
 import { notify } from '../util/helper';
 import { expenses, deleteExpense } from '../services/data.service';
+import SimpleStats from '../components/SimpleStats';
 
 const Home = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -11,6 +12,9 @@ const Home = () => {
   const [expenseId, setExpenseId] = useState();
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [errorLoading, setErrorLoading] = useState(false);
+  const [biggestExpense, setBiggestExpense] = useState();
+  const [biggestExpenseAmount, setBiggestExpenseAmount] = useState();
+  const [totalSpent, setTotalSpent] = useState(0);
   const [sortVariations, setSortVariations] = useState([
     { sortBy: 'createdAt', sortType: 'none' },
     { sortBy: 'name', sortType: 'none' },
@@ -40,6 +44,18 @@ const Home = () => {
       const data = await expenses();
       setExpensesArray(data);
       setLoading(false);
+      //code for initializing variables for simple stats
+      if (data.length !== 0) {
+        let biggest = data[0];
+        data.forEach(element => {
+          if (element.amount > biggest.amount) {
+            biggest = element;
+          }
+          setTotalSpent(g => g + element.amount);
+        });
+        setBiggestExpense(biggest.name);
+        setBiggestExpenseAmount(biggest.amount);
+      }
       setErrorLoading(false);
       setExpensesArrayCopy(data);
     } catch (error) {
@@ -152,24 +168,34 @@ const Home = () => {
   }, []);
 
   return (
-    <ExpenseList
-      dropdownOpen={dropdownOpen}
-      loading={loading}
-      showDeletePopup={showDeletePopup}
-      setShowDeletePopup={setShowDeletePopup}
-      expenseId={expenseId}
-      deleteLoading={deleteLoading}
-      triggerExpenseDelete={triggerExpenseDelete}
-      deleteExpenseById={deleteExpenseById}
-      toggleDropDown={toggleDropDown}
-      expensesArray={expensesArray}
-      errorLoading={errorLoading}
-      getExpenses={getExpenses}
-      sortExpenses={sortExpenses}
-      sortVariations={sortVariations}
-      handleSearchChange={handleSearchChange}
-      triggerFilterExpenses={triggerFilterExpenses}
-    ></ExpenseList>
+    <div>
+      <ExpenseList
+        dropdownOpen={dropdownOpen}
+        loading={loading}
+        showDeletePopup={showDeletePopup}
+        setShowDeletePopup={setShowDeletePopup}
+        expenseId={expenseId}
+        deleteLoading={deleteLoading}
+        triggerExpenseDelete={triggerExpenseDelete}
+        deleteExpenseById={deleteExpenseById}
+        toggleDropDown={toggleDropDown}
+        expensesArray={expensesArray}
+        errorLoading={errorLoading}
+        getExpenses={getExpenses}
+        sortExpenses={sortExpenses}
+        sortVariations={sortVariations}
+        handleSearchChange={handleSearchChange}
+        triggerFilterExpenses={triggerFilterExpenses}
+      ></ExpenseList>
+      {biggestExpense !== undefined && totalSpent !== undefined && (
+        <SimpleStats
+          className='mx-auto'
+          biggestExpense={biggestExpense}
+          totalSpent={totalSpent}
+          biggestExpenseAmount={biggestExpenseAmount}
+        ></SimpleStats>
+      )}
+    </div>
   );
 };
 Home.propTypes = {};

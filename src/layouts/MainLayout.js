@@ -46,6 +46,9 @@ const MainLayout = ({ children }) => {
       </nav>
       {/*<Navbar />*/}
       <div>{children}</div>
+      <footer className='bg-primary p-1 text-light text-center fixed-bottom'>
+        Klika Expense Tracker
+      </footer>
     </div>
   );
 };
