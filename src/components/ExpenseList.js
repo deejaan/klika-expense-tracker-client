@@ -27,6 +27,8 @@ const ExpenseList = ({
   expensesArray,
   errorLoading,
   getExpenses,
+  triggerExpenseEdit,
+  setExpenseDetails,
   setShowAddExpenseModal,
   sortExpenses,
   sortVariations,
@@ -246,9 +248,12 @@ const ExpenseList = ({
               date={item.createdAt.slice(0, 10)}
               name={item.name}
               categoryName={item.category.name}
+              categoryId={item.category.id}
               description={item.description}
               amount={item.amount}
               triggerExpenseDelete={triggerExpenseDelete}
+              triggerExpenseEdit={triggerExpenseEdit}
+              setExpenseDetails={setExpenseDetails}
             ></Expense>
           ))}
         </tbody>
@@ -279,6 +284,8 @@ ExpenseList.propTypes = {
   expensesArray: PropTypes.array,
   getExpenses: PropTypes.func,
   errorLoading: PropTypes.bool,
+  triggerExpenseEdit: PropTypes.func,
+  setExpenseDetails: PropTypes.func,
   sortExpenses: PropTypes.func,
   sortVariations: PropTypes.array,
   triggerFilterExpenses: PropTypes.func,

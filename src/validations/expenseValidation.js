@@ -5,7 +5,6 @@ let nameOk = false,
   categoryOk = false;
 
 export const validateName = value => {
-  console.log(value.length);
   if (value.length < 1 || value.length > 50) {
     nameOk = false;
     return (
@@ -19,33 +18,19 @@ export const validateName = value => {
 };
 
 export const validateAmount = value => {
-  console.log(value.length);
   if (value.length < 1) {
     amountOk = false;
-    return (
-      <div className='alert alert-danger' role='alert'>
-        This field is required!!
-      </div>
-    );
   } else {
     amountOk = true;
   }
 };
 
 export const validateCategory = value => {
-  console.log(value.length);
   if (value.length < 1) {
     categoryOk = false;
     return (
       <div className='alert alert-danger' role='alert'>
         This field is required!
-      </div>
-    );
-  } else if (value < 0) {
-    categoryOk = false;
-    return (
-      <div className='alert alert-danger' role='alert'>
-        Amount must be a positive number!
       </div>
     );
   } else {

@@ -1,12 +1,18 @@
 import React, { useState, useEffect, useRef } from 'react';
 import ExpenseList from '../components/ExpenseList';
 import { notify } from '../util/helper';
-import { expenses, deleteExpense, addExpense } from '../services/data.service';
+import {
+  expenses,
+  deleteExpense,
+  editExpense,
+  addExpense,
+} from '../services/data.service';
 import SimpleStats from '../components/SimpleStats';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { expenseFieldsValidateOk } from '../validations/addExpenseValidation';
+import { expenseFieldsValidateOk } from '../validations/expenseValidation';
 import { categories } from '../constants';
+import EditExpense from '../components/EditExpense';
 import AddExpense from '../components/AddExpense';
 
 const Home = () => {
@@ -18,6 +24,18 @@ const Home = () => {
   const [expenseId, setExpenseId] = useState();
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [errorLoading, setErrorLoading] = useState(false);
+  const [showEditExpenseModal, setShowEditExpenseModal] = useState(false);
+  const [editedExpenseDetails, setEditedExpenseDetails] = useState({
+    name: undefined,
+    amount: undefined,
+    description: undefined,
+    category_id: undefined,
+  });
+  const [updateLoading, setUpdateLoading] = useState();
+  const [biggestExpense, setBiggestExpense] = useState();
+  const [biggestExpenseAmount, setBiggestExpenseAmount] = useState();
+  const [totalSpent, setTotalSpent] = useState(0);
+  //const [date, setDate] = useState();
   const [expenseDetails, setExpenseDetails] = useState({
     name: '',
     amount: '',
@@ -25,11 +43,15 @@ const Home = () => {
     category: '',
   });
   const [showAddExpenseModal, setShowAddExpenseModal] = useState(false);
-  //const [date, setDate] = useState();
-  const [biggestExpense, setBiggestExpense] = useState();
-  const [biggestExpenseAmount, setBiggestExpenseAmount] = useState();
-  const [totalSpent, setTotalSpent] = useState(0);
   const [addLoading, setAddLoading] = useState(false);
+  const [sortVariations, setSortVariations] = useState([
+    { sortBy: 'createdAt', sortType: 'none' },
+    { sortBy: 'name', sortType: 'none' },
+    { sortBy: 'category', sortType: 'none' },
+    { sortBy: 'description', sortType: 'none' },
+    { sortBy: 'amount', sortType: 'none' },
+  ]);
+  const [expensesArrayCopy, setExpensesArrayCopy] = useState([]);
 
   const addNewExpense = async () => {
     form.current.validateAll();
@@ -74,6 +96,15 @@ const Home = () => {
     });
   };
 
+  const setAllEditFieldsEmpty = () => {
+    setEditedExpenseDetails({
+      name: undefined,
+      amount: undefined,
+      description: undefined,
+      category: undefined,
+    });
+  };
+
   const onChangeExpenseName = e => {
     const name = e.target.value;
     setExpenseDetails({ ...expenseDetails, name });
@@ -93,14 +124,92 @@ const Home = () => {
   // const onChangeDate = date => {
   //   setDate(date);
   // };
-  const [sortVariations, setSortVariations] = useState([
-    { sortBy: 'createdAt', sortType: 'none' },
-    { sortBy: 'name', sortType: 'none' },
-    { sortBy: 'category', sortType: 'none' },
-    { sortBy: 'description', sortType: 'none' },
-    { sortBy: 'amount', sortType: 'none' },
-  ]);
-  const [expensesArrayCopy, setExpensesArrayCopy] = useState([]);
+
+  const editNewExpense = async () => {
+    form.current.validateAll();
+    if (expenseFieldsValidateOk()) {
+      // const newDate = new Date(date);
+      // const dateSliced =
+      //   newDate.getFullYear() +
+      //   '-' +
+      //   (newDate.getMonth() + 1) +
+      //   '-' +
+      //   newDate.getDate() +
+      //   ' 00:00:00.000000';
+      if (
+        /*!editedExpenseDetails.amount &&
+        !editedExpenseDetails.category_id &&
+        !editedExpenseDetails.description &&
+        !editedExpenseDetails.name*/
+        Object.values(editedExpenseDetails).every(el => el === undefined)
+      ) {
+        notify('Nothing to update', 'warning');
+        setShowEditExpenseModal(false);
+      } else {
+        setUpdateLoading(true);
+        editExpense(expenseId, editedExpenseDetails)
+          .then(response => {
+            notify(
+              'Expense ' + response.data.expense.name + ' sucessfully updated',
+              'success'
+            );
+            getExpenses();
+            setUpdateLoading(false);
+            setShowEditExpenseModal(false);
+          })
+          .catch(error => {
+            setShowEditExpenseModal(false);
+            setUpdateLoading(false);
+            notify(error.message, 'error');
+          });
+      }
+      setAllFieldsEmpty();
+      setAllEditFieldsEmpty();
+    }
+  };
+
+  const onChangeEditExpenseName = e => {
+    const name = e.target.value;
+    setExpenseDetails({ ...expenseDetails, name });
+    if (name === '') {
+      setEditedExpenseDetails({ ...editedExpenseDetails, undefined });
+    } else {
+      setEditedExpenseDetails({ ...editedExpenseDetails, name });
+    }
+  };
+  const onChangeEditExpenseAmount = e => {
+    const amount = e.target.value;
+    setExpenseDetails({ ...expenseDetails, amount });
+    if (amount === '') {
+      setEditedExpenseDetails({ ...editedExpenseDetails, undefined });
+    } else {
+      setEditedExpenseDetails({ ...editedExpenseDetails, amount });
+    }
+  };
+  const onChangeEditExpenseDescription = e => {
+    const description = e.target.value;
+    setExpenseDetails({ ...expenseDetails, description });
+    if (description === '') {
+      setEditedExpenseDetails({ ...editedExpenseDetails, undefined });
+    } else {
+      setEditedExpenseDetails({ ...editedExpenseDetails, description });
+    }
+  };
+  const onChangeEditExpenseCategory = e => {
+    const category = e.value;
+    setExpenseDetails({ ...expenseDetails, category });
+    if (category === '') {
+      setEditedExpenseDetails({ ...editedExpenseDetails, undefined });
+    } else {
+      setEditedExpenseDetails({
+        ...editedExpenseDetails,
+        category_id: category,
+      });
+    }
+  };
+  // const onChangeDate = date => {
+  //   setDate(date);
+  // };
 
   const handleSearchChange = e => {
     let newExpensesList = [];
@@ -142,6 +251,10 @@ const Home = () => {
     }
   };
 
+  const triggerExpenseEdit = id => {
+    setExpenseId(id);
+    setShowEditExpenseModal(true);
+  };
   const setSortVariation = sortBy => {
     let variations = sortVariations;
     variations.forEach(variation => {
@@ -247,6 +360,24 @@ const Home = () => {
 
   return (
     <div>
+      {showEditExpenseModal && (
+        <EditExpense
+          expenseDetails={expenseDetails}
+          showEditExpenseModal={showEditExpenseModal}
+          setShowEditExpenseModal={setShowEditExpenseModal}
+          categories={categories}
+          editNewExpense={editNewExpense}
+          updateLoading={updateLoading}
+          form={form}
+          onChangeEditExpenseAmount={onChangeEditExpenseAmount}
+          onChangeEditExpenseCategory={onChangeEditExpenseCategory}
+          onChangeEditExpenseDescription={onChangeEditExpenseDescription}
+          onChangeEditExpenseName={onChangeEditExpenseName}
+          setAllEditFieldsEmpty={setAllEditFieldsEmpty}
+          setAllFieldsEmpty={setAllFieldsEmpty}
+        ></EditExpense>
+      )}
+
       {showAddExpenseModal && (
         <AddExpense
           expenseDetails={expenseDetails}
@@ -290,15 +421,17 @@ const Home = () => {
         setShowAddExpenseModal={setShowAddExpenseModal}
         categories={categories}
         addNewExpense={addNewExpense}
-        onChangeExpenseAmount={onChangeExpenseAmount}
-        onChangeExpenseCategory={onChangeExpenseCategory}
-        onChangeExpenseDescription={onChangeExpenseDescription}
-        onChangeExpenseName={onChangeExpenseName}
+        showEditExpenseModal={showEditExpenseModal}
+        setShowEditExpenseModal={setShowEditExpenseModal}
+        editNewExpense={editNewExpense}
         form={form}
+        triggerExpenseEdit={triggerExpenseEdit}
+        setExpenseDetails={setExpenseDetails}
         sortExpenses={sortExpenses}
         sortVariations={sortVariations}
         handleSearchChange={handleSearchChange}
         triggerFilterExpenses={triggerFilterExpenses}
+        updateLoading={updateLoading}
         addLoading={addLoading}
         setAllFieldsEmpty={setAllFieldsEmpty}
       ></ExpenseList>

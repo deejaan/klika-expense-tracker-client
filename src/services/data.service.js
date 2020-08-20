@@ -14,6 +14,11 @@ export const deleteExpense = id => {
   });
 };
 
+export const editExpense = (id, expense) => {
+  return axios.patch(API_URL + '/expenses/' + id, {
+    expense,
+  });
+};
 export const addExpense = (name, amount, description, categoryId) => {
   return axios
     .post(API_URL + '/expenses', {

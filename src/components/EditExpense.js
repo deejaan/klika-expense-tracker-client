@@ -11,26 +11,28 @@ import {
   validateAmount,
   validateCategory,
 } from '../validations/expenseValidation';
-import Loader from './Loader';
+import { required } from '../validations/registerValidation';
+import Loader from '../components/Loader';
 
-const AddExpense = ({
+const EditExpense = ({
   expenseDetails,
-  showAddExpenseModal,
-  setShowAddExpenseModal,
+  showEditExpenseModal,
+  setShowEditExpenseModal,
   categories,
-  addNewExpense,
-  onChangeExpenseAmount,
-  onChangeExpenseCategory,
-  onChangeExpenseDescription,
-  onChangeExpenseName,
+  editNewExpense,
+  onChangeEditExpenseAmount,
+  onChangeEditExpenseCategory,
+  onChangeEditExpenseDescription,
+  onChangeEditExpenseName,
   form,
-  addLoading,
+  updateLoading,
+  setAllEditFieldsEmpty,
   setAllFieldsEmpty,
 }) => {
   return (
-    <Modal show={showAddExpenseModal} size='sm'>
+    <Modal show={showEditExpenseModal} size='sm'>
       <Modal.Header className='text-primary'>
-        <Modal.Title>Create Expense</Modal.Title>
+        <Modal.Title>Edit Expense</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Form ref={form}>
@@ -42,8 +44,8 @@ const AddExpense = ({
                 className='form-control'
                 name='expensename'
                 value={expenseDetails.name}
-                onChange={onChangeExpenseName}
-                validations={[validateName]}
+                onChange={onChangeEditExpenseName}
+                validations={[required, validateName]}
               />
             </div>
             <div className='form-group'>
@@ -53,8 +55,8 @@ const AddExpense = ({
                 className='form-control'
                 name='amount'
                 value={expenseDetails.amount}
-                onChange={onChangeExpenseAmount}
-                validations={[validateAmount]}
+                onChange={onChangeEditExpenseAmount}
+                validations={[required, validateAmount]}
               />
             </div>
 
@@ -64,7 +66,7 @@ const AddExpense = ({
                 className='form-control'
                 name='description'
                 value={expenseDetails.description}
-                onChange={onChangeExpenseDescription}
+                onChange={onChangeEditExpenseDescription}
               />
             </div>
 
@@ -76,7 +78,7 @@ const AddExpense = ({
                   obj => obj.value === expenseDetails.category
                 )} // set selected value
                 options={categories} // set list of the data
-                onChange={onChangeExpenseCategory} // assign onChange function
+                onChange={onChangeEditExpenseCategory} // assign onChange function
                 validations={validateCategory}
               />
               <Input
@@ -84,8 +86,8 @@ const AddExpense = ({
                 autoComplete='off'
                 style={{ opacity: 0, height: 0 }}
                 value={expenseDetails.category}
-                onChange={onChangeExpenseCategory}
-                validations={[validateCategory]}
+                onChange={onChangeEditExpenseCategory}
+                validations={[required, validateCategory]}
               />
             </div>
             {/* <div className='form-group'>
@@ -99,26 +101,27 @@ const AddExpense = ({
             </div> */}
             <Modal.Footer>
               <div className='form-group'>
-                {addLoading ? (
+                {updateLoading ? (
                   <Loader></Loader>
                 ) : (
                   <button
-                    className='btn btn-primary'
-                    onClick={e => {
-                      addNewExpense();
+                    className='btn-primary'
+                    onClick={async e => {
+                      await editNewExpense();
                       e.preventDefault();
                     }}
                   >
-                    Save
+                    Edit
                   </button>
                 )}
               </div>
               <div className='form-group'>
                 <button
-                  className='btn btn-info'
+                  className='btn-info'
                   onClick={e => {
-                    setShowAddExpenseModal(false);
+                    setShowEditExpenseModal(false);
                     setAllFieldsEmpty();
+                    setAllEditFieldsEmpty();
                     e.preventDefault();
                   }}
                 >
@@ -133,19 +136,20 @@ const AddExpense = ({
   );
 };
 
-AddExpense.propTypes = {
+EditExpense.propTypes = {
   expenseDetails: PropTypes.object,
-  showAddExpenseModal: PropTypes.bool,
-  setShowAddExpenseModal: PropTypes.func,
+  showEditExpenseModal: PropTypes.bool,
+  setShowEditExpenseModal: PropTypes.func,
   categories: PropTypes.array,
-  addNewExpense: PropTypes.func,
-  onChangeExpenseAmount: PropTypes.func,
-  onChangeExpenseCategory: PropTypes.func,
-  onChangeExpenseDescription: PropTypes.func,
-  onChangeExpenseName: PropTypes.func,
+  editNewExpense: PropTypes.func,
+  onChangeEditExpenseAmount: PropTypes.func,
+  onChangeEditExpenseCategory: PropTypes.func,
+  onChangeEditExpenseDescription: PropTypes.func,
+  onChangeEditExpenseName: PropTypes.func,
   form: PropTypes.elementType,
-  addLoading: PropTypes.bool,
+  updateLoading: PropTypes.bool,
+  setAllEditFieldsEmpty: PropTypes.func,
   setAllFieldsEmpty: PropTypes.func,
 };
 
-export default AddExpense;
+export default EditExpense;
