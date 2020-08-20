@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { logout, getCurrentUser } from '../services/auth.service';
+import Logo from '../assets/img/logo.png';
 
 const MainLayout = ({ children }) => {
   const [currentUser, setCurrentUser] = useState('');
@@ -21,11 +22,15 @@ const MainLayout = ({ children }) => {
     <div>
       <nav className='navbar navbar-expand navbar-dark bg-dark'>
         <Link to={'/home'} className='navbar-brand'>
-          Klika
+          <img
+            src={Logo}
+            alt='Klika'
+            style={{ width: '2em', height: '2em' }}
+          ></img>
         </Link>
-        <div className='navbar-nav mr-auto'>
+        <div className='navbar-nav mr-auto '>
           <li className='nav-item'>
-            <Link to={'/home'} className='nav-link'>
+            <Link to={'/home'} className='nav-link active'>
               Home
             </Link>
           </li>

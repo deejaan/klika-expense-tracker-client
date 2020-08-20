@@ -156,15 +156,17 @@ const Home = () => {
             getExpenses();
             setUpdateLoading(false);
             setShowEditExpenseModal(false);
+            setAllFieldsEmpty();
+            setAllEditFieldsEmpty();
           })
           .catch(error => {
             setShowEditExpenseModal(false);
             setUpdateLoading(false);
             notify(error.message, 'error');
+            setAllFieldsEmpty();
+            setAllEditFieldsEmpty();
           });
       }
-      setAllFieldsEmpty();
-      setAllEditFieldsEmpty();
     }
   };
 

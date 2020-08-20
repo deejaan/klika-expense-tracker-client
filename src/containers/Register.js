@@ -63,12 +63,14 @@ const Register = () => {
           );
           setTimeout(() => {
             setRedirect(true);
-          }, 5000);
+          }, 3000);
         })
         .catch(function (error) {
           setLoading(false);
+
           if (
-            error.response.data.error.data.constraint === 'users_email_unique'
+            error?.response?.data?.error?.data?.constraint ===
+            'users_email_unique'
           ) {
             notify('Email already exists', 'error');
           } else {

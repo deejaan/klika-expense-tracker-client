@@ -18,8 +18,13 @@ export const validateName = value => {
 };
 
 export const validateAmount = value => {
-  if (value.length < 1) {
+  if (value.length < 1 || value < 0) {
     amountOk = false;
+    return (
+      <div className='alert alert-danger' role='alert'>
+        Amount must be a positive number!
+      </div>
+    );
   } else {
     amountOk = true;
   }
