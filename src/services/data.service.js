@@ -13,3 +13,16 @@ export const deleteExpense = id => {
     return response;
   });
 };
+
+export const addExpense = (name, amount, description, categoryId) => {
+  return axios
+    .post(API_URL + '/expenses', {
+      name,
+      amount,
+      description,
+      categoryId,
+    })
+    .then(response => {
+      return response;
+    });
+};

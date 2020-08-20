@@ -7,9 +7,13 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Modal from 'react-bootstrap/Modal';
 import PropTypes from 'prop-types';
-import Tooltip from '@material-ui/core/Tooltip';
-import { faCaretDown, faCaretUp } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import Tooltip from '@material-ui/core/Tooltip';
+import {
+  faCaretDown,
+  faCaretUp,
+  faPlus,
+} from '@fortawesome/free-solid-svg-icons';
 import { filterOptions } from '../constants';
 
 const ExpenseList = ({
@@ -23,6 +27,7 @@ const ExpenseList = ({
   expensesArray,
   errorLoading,
   getExpenses,
+  setShowAddExpenseModal,
   sortExpenses,
   sortVariations,
   triggerFilterExpenses,
@@ -111,12 +116,25 @@ const ExpenseList = ({
                 onChange={triggerFilterExpenses} // assign onChange function
               />
             </th>
-            <th colSpan='4'>
+            <th colSpan='3'>
               <input
                 placeholder='Search..'
                 className='pl-1'
                 onChange={handleSearchChange}
               ></input>
+            </th>
+            <th colSpan='1'>
+              <Tooltip title='Create Expense' placement='bottom' arrow>
+                <div
+                  onClick={() => {
+                    setShowAddExpenseModal(true);
+                  }}
+                  style={{ cursor: 'pointer' }}
+                  className='rounded p-1 btn-secondary'
+                >
+                  <FontAwesomeIcon icon={faPlus}></FontAwesomeIcon>
+                </div>
+              </Tooltip>
             </th>
           </tr>
           <tr className='hover'>
@@ -251,7 +269,6 @@ const ExpenseList = ({
 };
 
 ExpenseList.propTypes = {
-  dropdownOpen: PropTypes.bool,
   loading: PropTypes.bool,
   showDeletePopup: PropTypes.bool,
   setShowDeletePopup: PropTypes.func,
@@ -259,7 +276,6 @@ ExpenseList.propTypes = {
   deleteLoading: PropTypes.bool,
   triggerExpenseDelete: PropTypes.func,
   deleteExpenseById: PropTypes.func,
-  toggleDropDown: PropTypes.func,
   expensesArray: PropTypes.array,
   getExpenses: PropTypes.func,
   errorLoading: PropTypes.bool,
@@ -267,5 +283,6 @@ ExpenseList.propTypes = {
   sortVariations: PropTypes.array,
   triggerFilterExpenses: PropTypes.func,
   handleSearchChange: PropTypes.func,
+  setShowAddExpenseModal: PropTypes.func,
 };
 export default ExpenseList;

@@ -1,20 +1,98 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import ExpenseList from '../components/ExpenseList';
 import { notify } from '../util/helper';
-import { expenses, deleteExpense } from '../services/data.service';
+import { expenses, deleteExpense, addExpense } from '../services/data.service';
 import SimpleStats from '../components/SimpleStats';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { expenseFieldsValidateOk } from '../validations/addExpenseValidation';
+import { categories } from '../constants';
+import AddExpense from '../components/AddExpense';
 
 const Home = () => {
-  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const form = useRef();
+
   const [expensesArray, setExpensesArray] = useState([]);
   const [loading, setLoading] = useState(false);
   const [showDeletePopup, setShowDeletePopup] = useState(false);
   const [expenseId, setExpenseId] = useState();
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [errorLoading, setErrorLoading] = useState(false);
+  const [expenseDetails, setExpenseDetails] = useState({
+    name: '',
+    amount: '',
+    description: '',
+    category: '',
+  });
+  const [showAddExpenseModal, setShowAddExpenseModal] = useState(false);
+  //const [date, setDate] = useState();
   const [biggestExpense, setBiggestExpense] = useState();
   const [biggestExpenseAmount, setBiggestExpenseAmount] = useState();
   const [totalSpent, setTotalSpent] = useState(0);
+  const [addLoading, setAddLoading] = useState(false);
+
+  const addNewExpense = async () => {
+    form.current.validateAll();
+    if (expenseFieldsValidateOk()) {
+      // const newDate = new Date(date);
+      // const dateSliced =
+      //   newDate.getFullYear() +
+      //   '-' +
+      //   (newDate.getMonth() + 1) +
+      //   '-' +
+      //   newDate.getDate() +
+      //   ' 00:00:00.000000';
+      setAddLoading(true);
+      addExpense(
+        expenseDetails.name,
+        expenseDetails.amount,
+        expenseDetails.description,
+        expenseDetails.category
+      )
+        .then(response => {
+          notify(response.data.message, 'success');
+          getExpenses();
+          setAddLoading(false);
+          setShowAddExpenseModal(false);
+          setAllFieldsEmpty();
+        })
+        .catch(error => {
+          setAddLoading(false);
+          setShowAddExpenseModal(false);
+          notify(error.message, 'error');
+          setAllFieldsEmpty();
+        });
+    }
+  };
+
+  const setAllFieldsEmpty = () => {
+    setExpenseDetails({
+      name: '',
+      amount: '',
+      description: '',
+      category: '',
+    });
+  };
+
+  const onChangeExpenseName = e => {
+    const name = e.target.value;
+    setExpenseDetails({ ...expenseDetails, name });
+  };
+  const onChangeExpenseAmount = e => {
+    const amount = e.target.value;
+    setExpenseDetails({ ...expenseDetails, amount });
+  };
+  const onChangeExpenseDescription = e => {
+    const description = e.target.value;
+    setExpenseDetails({ ...expenseDetails, description });
+  };
+  const onChangeExpenseCategory = e => {
+    const category = e.value;
+    setExpenseDetails({ ...expenseDetails, category });
+  };
+  // const onChangeDate = date => {
+  //   setDate(date);
+  // };
   const [sortVariations, setSortVariations] = useState([
     { sortBy: 'createdAt', sortType: 'none' },
     { sortBy: 'name', sortType: 'none' },
@@ -144,14 +222,16 @@ const Home = () => {
     setShowDeletePopup(true);
   };
 
-  async function deleteExpenseById(id) {
+  const deleteExpenseById = async id => {
     const newList = expensesArray.filter(item => item.id !== id);
+    const newListCopy = expensesArrayCopy.filter(item => item.id !== id);
     setDeleteLoading(true);
     deleteExpense(id)
       .then(response => {
         notify(response.data, 'success');
         setDeleteLoading(false);
         setExpensesArray(newList);
+        setExpensesArrayCopy(newListCopy);
         setShowDeletePopup(false);
       })
       .catch(error => {
@@ -159,9 +239,7 @@ const Home = () => {
         setDeleteLoading(false);
         setShowDeletePopup(false);
       });
-  }
-
-  const toggleDropDown = () => setDropdownOpen(prevState => !prevState);
+  };
 
   useEffect(() => {
     getExpenses();
@@ -169,8 +247,34 @@ const Home = () => {
 
   return (
     <div>
+      {showAddExpenseModal && (
+        <AddExpense
+          expenseDetails={expenseDetails}
+          showAddExpenseModal={showAddExpenseModal}
+          setShowAddExpenseModal={setShowAddExpenseModal}
+          categories={categories}
+          addNewExpense={addNewExpense}
+          onChangeExpenseAmount={onChangeExpenseAmount}
+          onChangeExpenseCategory={onChangeExpenseCategory}
+          onChangeExpenseDescription={onChangeExpenseDescription}
+          onChangeExpenseName={onChangeExpenseName}
+          form={form}
+          addLoading={addLoading}
+          setAllFieldsEmpty={setAllFieldsEmpty}
+        ></AddExpense>
+      )}
+      <ToastContainer
+        position='bottom-center'
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss={false}
+        draggable
+        pauseOnHover={false}
+      />
       <ExpenseList
-        dropdownOpen={dropdownOpen}
         loading={loading}
         showDeletePopup={showDeletePopup}
         setShowDeletePopup={setShowDeletePopup}
@@ -178,14 +282,25 @@ const Home = () => {
         deleteLoading={deleteLoading}
         triggerExpenseDelete={triggerExpenseDelete}
         deleteExpenseById={deleteExpenseById}
-        toggleDropDown={toggleDropDown}
         expensesArray={expensesArray}
         errorLoading={errorLoading}
         getExpenses={getExpenses}
+        expenseDetails={expenseDetails}
+        showAddExpenseModal={showAddExpenseModal}
+        setShowAddExpenseModal={setShowAddExpenseModal}
+        categories={categories}
+        addNewExpense={addNewExpense}
+        onChangeExpenseAmount={onChangeExpenseAmount}
+        onChangeExpenseCategory={onChangeExpenseCategory}
+        onChangeExpenseDescription={onChangeExpenseDescription}
+        onChangeExpenseName={onChangeExpenseName}
+        form={form}
         sortExpenses={sortExpenses}
         sortVariations={sortVariations}
         handleSearchChange={handleSearchChange}
         triggerFilterExpenses={triggerFilterExpenses}
+        addLoading={addLoading}
+        setAllFieldsEmpty={setAllFieldsEmpty}
       ></ExpenseList>
       {biggestExpense !== undefined && totalSpent !== undefined && (
         <SimpleStats
